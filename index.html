@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduSphere | School Management System</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+:root{
+--primary:#0787b5;
+--primary2:#075985;
+--light:#eefaff;
+--white:#fff;
+--text:#17384b;
+--muted:#70828b;
+--border:#d9e8ee;
+--green:#159957;
+--red:#dc3545;
+--orange:#ed8b00;
+--shadow:0 12px 35px rgba(0,70,100,.12)
+}
+
+body{
+color:var(--text);
+background:#f4f9fb;
+overflow-x:hidden;
+transition:.3s
+}
+
+body:before{
+content:"";
+position:fixed;
+inset:0;
+z-index:-5;
+background:
+linear-gradient(rgba(244,249,251,.94),rgba(244,249,251,.97)),
+url("https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=2000&q=85");
+background-size:cover;
+background-position:center;
+background-attachment:fixed
+}
+
+button{font-family:inherit}
+
+.login-page{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:
+linear-gradient(rgba(2,50,70,.78),rgba(0,126,165,.70)),
+url("https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=2000&q=85");
+background-size:cover;
+background-position:center
+}
+
+.login-card{
+width:430px;
+max-width:100%;
+padding:38px;
+text-align:center;
+background:rgba(255,255,255,.96);
+border-radius:25px;
+box-shadow:0 25px 70px rgba(0,0,0,.3);
+animation:loginIn .7s ease
+}
+
+@keyframes loginIn{
+from{opacity:0;transform:translateY(35px) scale(.95)}
+to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.school-logo{
+width:82px;height:82px;margin:auto;
+display:flex;align-items:center;justify-content:center;
+border-radius:22px;
+background:linear-gradient(135deg,#08a6d4,#075985);
+color:white;font-size:38px;
+box-shadow:0 12px 30px rgba(0,110,160,.3)
+}
+
+.login-card h1{margin-top:18px;color:#075985;font-size:29px}
+.login-card>p{color:var(--muted);margin:7px 0 25px}
+
+.input{position:relative;margin:13px 0}
+.input span{position:absolute;left:15px;top:13px}
+.input input{
+width:100%;padding:14px 15px 14px 45px;
+border:1px solid var(--border);border-radius:12px;
+outline:none;font-size:15px
+}
+.input input:focus{border-color:var(--primary);box-shadow:0 0 0 4px #0787b51a}
+
+.login-btn{
+width:100%;padding:14px;margin-top:7px;border:0;border-radius:12px;
+background:linear-gradient(135deg,#0787b5,#075985);
+color:white;font-size:16px;font-weight:bold;cursor:pointer;
+transition:.25s
+}
+.login-btn:hover{transform:translateY(-3px);box-shadow:0 12px 25px #0064964d}
+
+.members{margin-top:25px;padding-top:18px;border-top:1px solid #e3edf1}
+.members h3{font-size:14px;color:#075985;margin-bottom:8px}
+.members p{font-size:13px;color:#687c87;margin:4px}
+
+#app{display:none}
+
+.sidebar{
+position:fixed;left:0;top:0;bottom:0;width:250px;
+padding:22px 14px;color:white;
+background:linear-gradient(180deg,#064d6b,#052e43);
+box-shadow:8px 0 30px #00283c2e;
+z-index:100
+}
+
+.brand{display:flex;align-items:center;gap:12px;padding:5px 8px 25px}
+.brand-icon{
+width:46px;height:46px;border-radius:13px;
+display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,#08a6d4,#0bc0e9);
+font-size:22px
+}
+.brand h2{font-size:19px}
+.brand small{color:#a9d7e5}
+
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{
+border:0;background:transparent;color:#d8edf4;
+text-align:left;padding:12px 13px;border-radius:11px;
+cursor:pointer;transition:.25s;font-size:14px
+}
+.nav button:hover{background:#ffffff12;transform:translateX(3px)}
+.nav button.active{
+background:linear-gradient(90deg,#0787b5,#0ba9d2);
+color:white;box-shadow:0 8px 20px #00000026
+}
+
+.sidebar-bottom{
+position:absolute;left:14px;right:14px;bottom:16px
+}
+.sidebar-bottom button{
+width:100%;padding:10px;margin-top:7px;border:0;border-radius:10px;cursor:pointer
+}
+.dark-btn{background:#123d51;color:white}
+.logout{background:#e74c3c;color:white}
+
+.main{margin-left:250px;min-height:100vh;padding:25px}
+
+.topbar{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:24px
+}
+.topbar h1{font-size:27px}
+.topbar p{margin-top:5px;color:var(--muted)}
+.clock{
+padding:11px 15px;background:#ffffffc9;border:1px solid var(--border);
+border-radius:12px;font-size:13px
+}
+
+.mobile-menu{
+display:none;width:42px;height:42px;border:0;border-radius:10px;
+background:#075985;color:white;font-size:20px
+}
+
+.section{display:none;animation:sectionIn .4s ease}
+.section.active{display:block}
+
+@keyframes sectionIn{
+from{opacity:0;transform:translateY(12px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+.stats{
+display:grid;grid-template-columns:repeat(5,1fr);gap:15px;margin-bottom:20px
+}
+
+.stat{
+padding:20px;background:#ffffffd4;border:1px solid #ffffff;
+border-radius:18px;box-shadow:var(--shadow);transition:.25s
+}
+.stat:hover{transform:translateY(-5px)}
+.stat-icon{font-size:25px;margin-bottom:8px}
+.stat h2{font-size:27px}
+.stat p{font-size:13px;color:var(--muted);margin-top:5px}
+
+.card{
+padding:21px;margin-bottom:18px;
+background:#ffffffd4;border:1px solid #ffffff;
+border-radius:18px;box-shadow:var(--shadow)
+}
+
+.card-head{
+display:flex;justify-content:space-between;align-items:center;
+gap:10px;margin-bottom:17px
+}
+.card-head h2{font-size:19px}
+
+.btn{
+border:0;padding:10px 14px;border-radius:9px;
+cursor:pointer;font-weight:bold;transition:.2s
+}
+.btn:hover{transform:translateY(-2px)}
+.primary{background:linear-gradient(135deg,#0787b5,#075985);color:white}
+.success{background:#e2f7ec;color:#117442}
+.danger{background:#ffe7ea;color:#c92c3c}
+.warning{background:#fff3dc;color:#a96500}
+.gray{background:#edf3f6;color:#365563}
+
+.quick-grid{
+display:grid;grid-template-columns:repeat(4,1fr);gap:14px
+}
+.quick{
+padding:19px;border-radius:15px;background:linear-gradient(135deg,#eefaff,#fff);
+border:1px solid #dceff6;cursor:pointer;transition:.25s
+}
+.quick:hover{transform:translateY(-5px);border-color:#8bd5e9}
+.quick-icon{font-size:25px;margin-bottom:8px}
+.quick h3{font-size:15px}
+.quick p{color:var(--muted);font-size:12px;margin-top:5px}
+
+.search{
+width:100%;max-width:320px;padding:11px 13px;
+border:1px solid var(--border);border-radius:10px;outline:0
+}
+.search:focus{border-color:var(--primary)}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th{
+padding:12px;background:#edf8fc;color:#075985;
+text-align:left;font-size:12px
+}
+td{padding:12px;border-bottom:1px solid #e7eef2;font-size:13px}
+tbody tr:hover{background:#f0fbfe}
+
+.form-grid{
+display:grid;grid-template-columns:repeat(2,1fr);gap:13px
+}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:12px;font-weight:bold;color:var(--muted)}
+.form-group input,.form-group select{
+padding:11px;border:1px solid var(--border);
+border-radius:9px;outline:0;background:white
+}
+.form-group input:focus,.form-group select:focus{border-color:var(--primary)}
+
+.attendance-grid{
+display:grid;grid-template-columns:repeat(3,1fr);gap:14px
+}
+.att-card{
+padding:17px;border-radius:15px;background:linear-gradient(135deg,#fff,#effaff);
+border:1px solid #dceff6
+}
+.att-card p{color:var(--muted);font-size:13px;margin-top:5px}
+.progress{height:8px;margin-top:10px;background:#e5edf0;border-radius:20px;overflow:hidden}
+.progress-bar{
+height:100%;background:linear-gradient(90deg,#08a6d4,#075985);
+transition:.5s
+}
+
+.notice{
+padding:16px;border-left:4px solid var(--primary);
+background:#f3fbfe;border-radius:10px;margin-bottom:10px
+}
+.notice strong{display:block;margin-bottom:5px}
+.notice small{color:var(--muted)}
+
+.summary-grid{
+display:grid;grid-template-columns:repeat(3,1fr);gap:15px
+}
+.summary{
+padding:18px;border-radius:15px;background:#f6fbfd;border:1px solid #e1eef2
+}
+.summary h3{font-size:25px;margin-top:5px}
+.summary p{color:var(--muted);font-size:12px}
+
+.modal{
+display:none;position:fixed;inset:0;background:#00192899;
+backdrop-filter:blur(5px);z-index:500;
+align-items:center;justify-content:center;padding:18px
+}
+.modal.show{display:flex}
+.modal-box{
+width:650px;max-width:100%;max-height:90vh;overflow:auto;
+background:white;border-radius:20px;padding:24px;
+box-shadow:0 25px 70px #0000004d;
+animation:modalIn .3s ease
+}
+@keyframes modalIn{
+from{opacity:0;transform:scale(.92) translateY(15px)}
+to{opacity:1;transform:scale(1) translateY(0)}
+}
+.modal-head{
+display:flex;justify-content:space-between;align-items:center;margin-bottom:18px
+}
+.close{
+width:34px;height:34px;border:0;border-radius:50%;
+background:#edf3f6;cursor:pointer;font-size:18px
+}
+
+.toast{
+position:fixed;right:20px;bottom:20px;padding:13px 17px;
+background:#123b4c;color:white;border-radius:10px;
+box-shadow:0 10px 30px #00000040;
+transform:translateY(100px);opacity:0;transition:.3s;z-index:9999
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:1100px){
+.stats{grid-template-columns:repeat(3,1fr)}
+.quick-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:900px){
+.sidebar{transform:translateX(-100%);transition:.3s}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0;padding:18px}
+.mobile-menu{display:block}
+.stats{grid-template-columns:repeat(2,1fr)}
+.attendance-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:600px){
+.topbar{align-items:flex-start}
+.topbar h1{font-size:22px}
+.clock{display:none}
+.stats{grid-template-columns:1fr}
+.quick-grid{grid-template-columns:1fr}
+.attendance-grid{grid-template-columns:1fr}
+.summary-grid{grid-template-columns:1fr}
+.form-grid{grid-template-columns:1fr}
+.card{padding:15px}
+.card-head{flex-direction:column;align-items:flex-start}
+.login-card{padding:27px 20px}
+}
+
+body.dark{
+--text:#e7f5fa;--muted:#a9c0c9;--border:#294754;background:#071a23
+}
+body.dark:before{
+background:
+linear-gradient(#05121beF,#05141df5),
+url("https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=2000&q=85");
+background-size:cover;background-position:center
+}
+body.dark .stat,
+body.dark .card,
+body.dark .clock{background:#0d2731e8;border-color:#294754}
+body.dark .quick{background:#102c37;border-color:#294754}
+body.dark th{background:#153945;color:#8edcf2}
+body.dark td{border-color:#294754}
+body.dark tbody tr:hover{background:#12323d}
+body.dark .search,
+body.dark .form-group input,
+body.dark .form-group select{
+background:#102832;color:white;border-color:#31525e
+}
+body.dark .att-card,
+body.dark .summary,
+body.dark .notice{background:#102c37;border-color:#294754}
+body.dark .modal-box{background:#102832;color:white}
+body.dark .close{background:#193944;color:white}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login-page" id="loginPage">
+<div class="login-card">
+
+<div class="school-logo">🏫</div>
+<h1>EduSphere</h1>
+<p>School Management System</p>
+
+<div class="input">
+<span>👤</span>
+<input id="username" placeholder="Username">
+</div>
+
+<div class="input">
+<span>🔐</span>
+<input id="password" type="password" placeholder="Password">
+</div>
+
+<button class="login-btn" onclick="login()">Login</button>
+
+<div class="members">
+<h3>👥 Project Members</h3>
+<p>Shravani Pawar</p>
+<p>Tanvi Bahirwade</p>
+</div>
+
+</div>
+</div>
+
+
+<!-- APP -->
+<div id="app">
+
+<aside class="sidebar" id="sidebar">
+
+<div class="brand">
+<div class="brand-icon">🏫</div>
+<div>
+<h2>EduSphere</h2>
+<small>School Management</small>
+</div>
+</div>
+
+<nav class="nav">
+
+<button class="active" onclick="showSection('dashboard',this)">🏠 Dashboard</button>
+<button onclick="showSection('students',this)">👨‍🎓 Students</button>
+<button onclick="showSection('teachers',this)">👩‍🏫 Teachers</button>
+<button onclick="showSection('subjects',this)">📚 Subjects</button>
+<button onclick="showSection('attendance',this)">📊 Attendance</button>
+<button onclick="showSection('exams',this)">📝 Exams & Marks</button>
+<button onclick="showSection('fees',this)">💰 Fees</button>
+<button onclick="showSection('notices',this)">📢 Notice Board</button>
+<button onclick="showSection('events',this)">📅 Events</button>
+<button onclick="showSection('reports',this)">📈 Reports</button>
+
+</nav>
+
+<div class="sidebar-bottom">
+<button class="dark-btn" onclick="toggleDark()">🌙 Dark Mode</button>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+
+</aside>
+
+
+<main class="main">
+
+<div class="topbar">
+
+<div style="display:flex;gap:12px;align-items:center">
+
+<button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+
+<div>
+<h1 id="pageTitle">Dashboard</h1>
+<p>Welcome to EduSphere School Management System</p>
+</div>
+
+</div>
+
+<div class="clock" id="clock"></div>
+
+</div>
+
+
+<!-- DASHBOARD -->
+<section class="section active" id="dashboard">
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-icon">👨‍🎓</div>
+<h2 id="studentCount">0</h2>
+<p>Total Students</p>
+</div>
+
+<div class="stat">
+<div class="stat-icon">👩‍🏫</div>
+<h2 id="teacherCount">0</h2>
+<p>Total Teachers</p>
+</div>
+
+<div class="stat">
+<div class="stat-icon">📚</div>
+<h2 id="subjectCount">0</h2>
+<p>Total Subjects</p>
+</div>
+
+<div class="stat">
+<div class="stat-icon">📊</div>
+<h2 id="attendanceAverage">0%</h2>
+<p>Attendance</p>
+</div>
+
+<div class="stat">
+<div class="stat-icon">💰</div>
+<h2 id="feeCollection">0%</h2>
+<p>Fee Collection</p>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-head">
+<h2>⚡ Quick Actions</h2>
+</div>
+
+<div class="quick-grid">
+
+<div class="quick" onclick="openModal('studentModal')">
+<div class="quick-icon">👨‍🎓</div>
+<h3>Add Student</h3>
+<p>Register a school student</p>
+</div>
+
+<div class="quick" onclick="openModal('teacherModal')">
+<div class="quick-icon">👩‍🏫</div>
+<h3>Add Teacher</h3>
+<p>Add teaching staff</p>
+</div>
+
+<div class="quick" onclick="openModal('marksModal')">
+<div class="quick-icon">📝</div>
+<h3>Add Marks</h3>
+<p>Record examination marks</p>
+</div>
+
+<div class="quick" onclick="openModal('noticeModal')">
+<div class="quick-icon">📢</div>
+<h3>New Notice</h3>
+<p>Publish school notice</p>
+</div>
+
+</div>
+</div>
+
+
+<div class="card">
+
+<div class="card-head">
+<h2>📌 School Overview</h2>
+</div>
+
+<div class="summary-grid">
+
+<div class="summary">
+<p>Students</p>
+<h3 id="overviewStudents">0</h3>
+</div>
+
+<div class="summary">
+<p>Teachers</p>
+<h3 id="overviewTeachers">0</h3>
+</div>
+
+<div class="summary">
+<p>Notices</p>
+<h3 id="overviewNotices">0</h3>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- STUDENTS -->
+<section class="section" id="students">
+
+<div class="card">
+
+<div class="card-head">
+<h2>👨‍🎓 Student Management</h2>
+<button class="btn primary" onclick="openModal('studentModal')">+ Add Student</button>
+</div>
+
+<input class="search" id="studentSearch" placeholder="Search student..." oninput="renderStudents()">
+
+<br><br>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Roll No.</th>
+<th>Name</th>
+<th>Class</th>
+<th>Division</th>
+<th>Parent Mobile</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="studentTable"></tbody>
+</table>
+</div>
+
+</div>
+</section>
+
+
+<!-- TEACHERS -->
+<section class="section" id="teachers">
+
+<div class="card">
+
+<div class="card-head">
+<h2>👩‍🏫 Teacher Management</h2>
+<button class="btn primary" onclick="openModal('teacherModal')">+ Add Teacher</button>
+</div>
+
+<input class="search" id="teacherSearch" placeholder="Search teacher..." oninput="renderTeachers">
+
+<br><br>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Teacher</th>
+<th>Subject</th>
+<th>Qualification</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="teacherTable"></tbody>
+</table>
+</div>
+
+</div>
+</section>
+
+
+<!-- SUBJECTS -->
+<section class="section" id="subjects">
+
+<div class="card">
+
+<div class="card-head">
+<h2>📚 Subject Management</h2>
+<button class="btn primary" onclick="openModal('subjectModal')">+ Add Subject</button>
+</div>
+
+<input class="search" id="subjectSearch" placeholder="Search subject..." oninput="renderSubjects()">
+
+<br><br>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Class</th>
+<th>Teacher</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="subjectTable"></tbody>
+</table>
+</div>
+
+</div>
+</section>
+
+
+<!-- ATTENDANCE -->
+<section class="section" id="attendance">
+
+<div class="card">
+
+<div class="card-head">
+<h2>📊 Attendance Management</h2>
+</div>
+
+<div class="attendance-grid" id="attendanceContainer"></div>
+
+</div>
+</section>
+
+
+<!-- EXAMS -->
+<section class="section" id="exams">
+
+<div class="card">
+
+<div class="card-head">
+<h2>📝 Exams & Marks</h2>
+<button class="btn primary" onclick="openModal('marksModal')">+ Add Marks</button>
+</div>
+
+<input class="search" id="marksSearch" placeholder="Search student or subject..." oninput="renderMarks()">
+
+<br><br>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Student</th>
+<th>Class</th>
+<th>Subject</th>
+<th>Exam</th>
+<th>Marks</th>
+<th>Total</th>
+<th>Percentage</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="marksTable"></tbody>
+</table>
+</div>
+
+</div>
+</section>
+
+
+<!-- FEES -->
+<section class="section" id="fees">
+
+<div class="card">
+
+<div class="card-head">
+<h2>💰 Fees Management</h2>
+<button class="btn primary" onclick="openModal('feeModal')">+ Add Fee</button>
+</div>
+
+<div class="summary-grid" style="margin-bottom:20px">
+
+<div class="summary">
+<p>Total Fees</p>
+<h3 id="totalFees">₹0</h3>
+</div>
+
+<div class="summary">
+<p>Collected</p>
+<h3 id="paidFees">₹0</h3>
+</div>
+
+<div class="summary">
+<p>Pending</p>
+<h3 id="pendingFees">₹0</h3>
+</div>
+
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Student</th>
+<th>Class</th>
+<th>Total Fee</th>
+<th>Paid</th>
+<th>Pending</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="feeTable"></tbody>
+</table>
+</div>
+
+</div>
+</section>
+
+
+<!-- NOTICES -->
+<section class="section" id="notices">
+
+<div class="card">
+
+<div class="card-head">
+<h2>📢 School Notice Board</h2>
+<button class="btn primary" onclick="openModal('noticeModal')">+ Add Notice</button>
+</div>
+
+<div id="noticeContainer"></div>
+
+</div>
+</section>
+
+
+<!-- EVENTS -->
+<section class="section" id="events">
+
+<div class="card">
+
+<div class="card-head">
+<h2>📅 School Events</h2>
+<button class="btn primary" onclick="openModal('eventModal')">+ Add Event</button>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Date</th>
+<th>Venue</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="eventTable"></tbody>
+</table>
+</div>
+
+</div>
+</section>
+
+
+<!-- REPORTS -->
+<section class="section" id="reports">
+
+<div class="card">
+
+<div class="card-head">
+<h2>📈 School Reports</h2>
+<button class="btn primary" onclick="window.print()">🖨️ Print Report</button>
+</div>
+
+<div class="summary-grid">
+
+<div class="summary">
+<p>Total Students</p>
+<h3 id="reportStudents">0</h3>
+</div>
+
+<div class="summary">
+<p>Total Teachers</p>
+<h3 id="reportTeachers">0</h3>
+</div>
+
+<div class="summary">
+<p>Average Attendance</p>
+<h3 id="reportAttendance">0%</h3>
+</div>
+
+<div class="summary">
+<p>Average Marks</p>
+<h3 id="reportMarks">0%</h3>
+</div>
+
+<div class="summary">
+<p>Fee Collection</p>
+<h3 id="reportFees">0%</h3>
+</div>
+
+<div class="summary">
+<p>Total Notices</p>
+<h3 id="reportNotices">0</h3>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+<h2>👥 Project Members</h2>
+<br>
+<p><b>Shravani Pawar</b></p>
+<p><b>Tanvi Bahirwade</b></p>
+</div>
+
+</section>
+
+</main>
+</div>
+</div>
+
+
+<!-- STUDENT MODAL -->
+<div class="modal" id="studentModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>👨‍🎓 Add Student</h2>
+<button class="close" onclick="closeModal('studentModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Student Name</label>
+<input id="studentName" placeholder="Enter student name">
+</div>
+
+<div class="form-group">
+<label>Roll Number</label>
+<input id="studentRoll" placeholder="Enter roll number">
+</div>
+
+<div class="form-group">
+<label>Class</label>
+<select id="studentClass">
+<option>Class 1</option><option>Class 2</option>
+<option>Class 3</option><option>Class 4</option>
+<option>Class 5</option><option>Class 6</option>
+<option>Class 7</option><option>Class 8</option>
+<option>Class 9</option><option>Class 10</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Division</label>
+<select id="studentDivision">
+<option>A</option><option>B</option><option>C</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Parent Mobile</label>
+<input id="studentMobile" maxlength="10" placeholder="Parent mobile">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addStudent()">Save Student</button>
+
+</div>
+</div>
+
+
+<!-- TEACHER MODAL -->
+<div class="modal" id="teacherModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>👩‍🏫 Add Teacher</h2>
+<button class="close" onclick="closeModal('teacherModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Teacher Name</label>
+<input id="teacherName" placeholder="Teacher name">
+</div>
+
+<div class="form-group">
+<label>Subject</label>
+<input id="teacherSubject" placeholder="Subject">
+</div>
+
+<div class="form-group">
+<label>Qualification</label>
+<input id="teacherQualification" placeholder="e.g. M.Sc, B.Ed">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addTeacher()">Save Teacher</button>
+
+</div>
+</div>
+
+
+<!-- SUBJECT MODAL -->
+<div class="modal" id="subjectModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>📚 Add Subject</h2>
+<button class="close" onclick="closeModal('subjectModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Subject Name</label>
+<input id="subjectName" placeholder="Subject">
+</div>
+
+<div class="form-group">
+<label>Class</label>
+<select id="subjectClass">
+<option>Class 1</option><option>Class 2</option>
+<option>Class 3</option><option>Class 4</option>
+<option>Class 5</option><option>Class 6</option>
+<option>Class 7</option><option>Class 8</option>
+<option>Class 9</option><option>Class 10</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Teacher</label>
+<input id="subjectTeacher" placeholder="Teacher name">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addSubject()">Save Subject</button>
+
+</div>
+</div>
+
+
+<!-- MARKS MODAL -->
+<div class="modal" id="marksModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>📝 Add Examination Marks</h2>
+<button class="close" onclick="closeModal('marksModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Student</label>
+<select id="marksStudent"></select>
+</div>
+
+<div class="form-group">
+<label>Subject</label>
+<select id="marksSubject"></select>
+</div>
+
+<div class="form-group">
+<label>Exam</label>
+<select id="marksExam">
+<option>Unit Test 1</option>
+<option>Unit Test 2</option>
+<option>Half Yearly</option>
+<option>Final Examination</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Marks Obtained</label>
+<input id="marksObtained" type="number" placeholder="0">
+</div>
+
+<div class="form-group">
+<label>Total Marks</label>
+<input id="marksTotal" type="number" value="100">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addMarks()">Save Marks</button>
+
+</div>
+</div>
+
+
+<!-- FEE MODAL -->
+<div class="modal" id="feeModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>💰 Add Fee Record</h2>
+<button class="close" onclick="closeModal('feeModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Student</label>
+<select id="feeStudent"></select>
+</div>
+
+<div class="form-group">
+<label>Total Fee</label>
+<input id="feeTotal" type="number" placeholder="Total fee">
+</div>
+
+<div class="form-group">
+<label>Paid Amount</label>
+<input id="feePaid" type="number" placeholder="Paid amount">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addFee()">Save Fee</button>
+
+</div>
+</div>
+
+
+<!-- NOTICE MODAL -->
+<div class="modal" id="noticeModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>📢 New School Notice</h2>
+<button class="close" onclick="closeModal('noticeModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Notice Title</label>
+<input id="noticeTitle" placeholder="Notice title">
+</div>
+
+<div class="form-group">
+<label>Date</label>
+<input id="noticeDate" type="date">
+</div>
+
+<div class="form-group" style="grid-column:1/-1">
+<label>Notice Details</label>
+<input id="noticeDetails" placeholder="Write notice details">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addNotice()">Publish Notice</button>
+
+</div>
+</div>
+
+
+<!-- EVENT MODAL -->
+<div class="modal" id="eventModal">
+<div class="modal-box">
+
+<div class="modal-head">
+<h2>📅 Add School Event</h2>
+<button class="close" onclick="closeModal('eventModal')">×</button>
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Event Name</label>
+<input id="eventName" placeholder="Event name">
+</div>
+
+<div class="form-group">
+<label>Date</label>
+<input id="eventDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Venue</label>
+<input id="eventVenue" placeholder="Venue">
+</div>
+
+</div>
+
+<br>
+<button class="btn primary" onclick="addEvent()">Save Event</button>
+
+</div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* ================= DATA ================= */
+
+const studentsKey="eduStudents";
+const teachersKey="eduTeachers";
+const subjectsKey="eduSubjects";
+const marksKey="eduMarks";
+const feesKey="eduFees";
+const noticesKey="eduNotices";
+const eventsKey="eduEvents";
+const attendanceKey="eduAttendance";
+
+const defaultStudents=[
+{name:"Aarav Patil",roll:"101",className:"Class 8",division:"A",mobile:"9876543210"},
+{name:"Ananya Sharma",roll:"102",className:"Class 9",division:"A",mobile:"9876543211"},
+{name:"Rohan Jadhav",roll:"103",className:"Class 10",division:"B",mobile:"9876543212"},
+{name:"Sneha Pawar",roll:"104",className:"Class 7",division:"A",mobile:"9876543213"},
+{name:"Aditya More",roll:"105",className:"Class 8",division:"B",mobile:"9876543214"},
+{name:"Priya Shinde",roll:"106",className:"Class 9",division:"B",mobile:"9876543215"}
+];
+
+const defaultTeachers=[
+{name:"Rahul Deshmukh",subject:"Mathematics",qualification:"M.Sc, B.Ed"},
+{name:"Priya Kulkarni",subject:"English",qualification:"M.A, B.Ed"},
+{name:"Amit Patil",subject:"Science",qualification:"M.Sc, B.Ed"},
+{name:"Neha Joshi",subject:"Social Science",qualification:"M.A, B.Ed"},
+{name:"Kavita Patil",subject:"Marathi",qualification:"M.A, B.Ed"}
+];
+
+const defaultSubjects=[
+{name:"Mathematics",className:"Class 8",teacher:"Rahul Deshmukh"},
+{name:"English",className:"Class 9",teacher:"Priya Kulkarni"},
+{name:"Science",className:"Class 10",teacher:"Amit Patil"},
+{name:"Social Science",className:"Class 7",teacher:"Neha Joshi"},
+{name:"Marathi",className:"Class 8",teacher:"Kavita Patil"},
+{name:"Computer",className:"Class 9",teacher:"Amit Patil"}
+];
+
+function getData(key,def=[]){
+let x=localStorage.getItem(key);
+if(x===null){
+localStorage.setItem(key,JSON.stringify(def));
+return def;
+}
+return JSON.parse(x);
+}
+
+let students=getData(studentsKey,defaultStudents);
+let teachers=getData(teachersKey,defaultTeachers);
+let subjects=getData(subjectsKey,defaultSubjects);
+let marks=getData(marksKey,[]);
+let fees=getData(feesKey,[]);
+let notices=getData(noticesKey,[]);
+let events=getData(eventsKey,[]);
+let attendance=getData(attendanceKey,{});
+
+
+/* ================= LOGIN ================= */
+
+function login(){
+let u=document.getElementById("username").value.trim();
+let p=document.getElementById("password").value.trim();
+
+if(u==="admin" && p==="1234"){
+document.getElementById("loginPage").style.display="none";
+document.getElementById("app").style.display="block";
+refreshAll();
+toast("Login successful");
+}else{
+toast("Invalid username or password");
+}
+}
+
+document.getElementById("password").addEventListener("keydown",e=>{
+if(e.key==="Enter")login();
+});
+
+function logout(){
+document.getElementById("app").style.display="none";
+document.getElementById("loginPage").style.display="flex";
+document.getElementById("username").value="";
+document.getElementById("password").value="";
+}
+
+
+/* ================= NAVIGATION ================= */
+
+const titles={
+dashboard:"Dashboard",
+students:"Students",
+teachers:"Teachers",
+subjects:"Subjects",
+attendance:"Attendance",
+exams:"Exams & Marks",
+fees:"Fees",
+notices:"Notice Board",
+events:"School Events",
+reports:"Reports"
+};
+
+function showSection(id,btn){
+document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+
+document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+if(btn)btn.classList.add("active");
+
+document.getElementById("pageTitle").innerText=titles[id];
+document.getElementById("sidebar").classList.remove("open");
+
+if(id==="reports")renderReports();
+if(id==="fees")renderFees();
+if(id==="exams")renderMarks();
+}
+
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("open");
+}
+
+
+/* ================= DASHBOARD ================= */
+
+function updateDashboard(){
+
+document.getElementById("studentCount").innerText=students.length;
+document.getElementById("teacherCount").innerText=teachers.length;
+document.getElementById("subjectCount").innerText=subjects.length;
+
+let total=0;
+let count=0;
+
+students.forEach(s=>{
+let a=attendance[s.roll];
+if(a && a.total>0){
+total+=(a.present/a.total)*100;
+count++;
+}
+});
+
+let avg=count?Math.round(total/count):0;
+document.getElementById("attendanceAverage").innerText=avg+"%";
+
+let totalFee=fees.reduce((a,b)=>a+Number(b.total),0);
+let paidFee=fees.reduce((a,b)=>a+Number(b.paid),0);
+let feePercent=totalFee?Math.round(paidFee/totalFee*100):0;
+
+document.getElementById("feeCollection").innerText=feePercent+"%";
+
+document.getElementById("overviewStudents").innerText=students.length;
+document.getElementById("overviewTeachers").innerText=teachers.length;
+document.getElementById("overviewNotices").innerText=notices.length;
+}
+
+
+/* ================= STUDENTS ================= */
+
+function renderStudents(){
+
+let search=(document.getElementById("studentSearch")?.value||"").toLowerCase();
+
+let html="";
+
+students.forEach((s,i)=>{
+if(
+!s.name.toLowerCase().includes(search) &&
+!s.roll.toLowerCase().includes(search) &&
+!s.className.toLowerCase().includes(search)
+)return;
+
+html+=`
+<tr>
+<td>${safe(s.roll)}</td>
+<td>${safe(s.name)}</td>
+<td>${safe(s.className)}</td>
+<td>${safe(s.division)}</td>
+<td>${safe(s.mobile)}</td>
+<td>
+<button class="btn danger" onclick="deleteStudent(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("studentTable").innerHTML=html;
+}
+
+function addStudent(){
+
+let name=document.getElementById("studentName").value.trim();
+let roll=document.getElementById("studentRoll").value.trim();
+let className=document.getElementById("studentClass").value;
+let division=document.getElementById("studentDivision").value;
+let mobile=document.getElementById("studentMobile").value.trim();
+
+if(!name||!roll||!mobile){
+toast("Please fill all fields");
+return;
+}
+
+if(students.some(x=>x.roll===roll)){
+toast("Roll number already exists");
+return;
+}
+
+students.push({name,roll,className,division,mobile});
+save(studentsKey,students);
+
+closeModal("studentModal");
+clearInputs("studentName","studentRoll","studentMobile");
+
+renderStudents();
+renderAttendance();
+updateDashboard();
+
+toast("Student added successfully");
+}
+
+function deleteStudent(i){
+if(confirm("Delete this student?")){
+delete attendance[students[i].roll];
+students.splice(i,1);
+save(studentsKey,students);
+save(attendanceKey,attendance);
+refreshAll();
+toast("Student deleted");
+}
+}
+
+
+/* ================= TEACHERS ================= */
+
+function renderTeachers(){
+
+let search=(document.getElementById("teacherSearch")?.value||"").toLowerCase();
+
+let html="";
+
+teachers.forEach((t,i)=>{
+if(
+!t.name.toLowerCase().includes(search)&&
+!t.subject.toLowerCase().includes(search)
+)return;
+
+html+=`
+<tr>
+<td>${safe(t.name)}</td>
+<td>${safe(t.subject)}</td>
+<td>${safe(t.qualification)}</td>
+<td>
+<button class="btn danger" onclick="deleteTeacher(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("teacherTable").innerHTML=html;
+}
+
+function addTeacher(){
+
+let name=document.getElementById("teacherName").value.trim();
+let subject=document.getElementById("teacherSubject").value.trim();
+let qualification=document.getElementById("teacherQualification").value.trim();
+
+if(!name||!subject||!qualification){
+toast("Please fill all fields");
+return;
+}
+
+teachers.push({name,subject,qualification});
+save(teachersKey,teachers);
+
+closeModal("teacherModal");
+clearInputs("teacherName","teacherSubject","teacherQualification");
+
+renderTeachers();
+updateDashboard();
+toast("Teacher added successfully");
+}
+
+function deleteTeacher(i){
+if(confirm("Delete this teacher?")){
+teachers.splice(i,1);
+save(teachersKey,teachers);
+renderTeachers();
+updateDashboard();
+toast("Teacher deleted");
+}
+}
+
+
+/* ================= SUBJECTS ================= */
+
+function renderSubjects(){
+
+let search=(document.getElementById("subjectSearch")?.value||"").toLowerCase();
+
+let html="";
+
+subjects.forEach((s,i)=>{
+if(
+!s.name.toLowerCase().includes(search)&&
+!s.teacher.toLowerCase().includes(search)&&
+!s.className.toLowerCase().includes(search)
+)return;
+
+html+=`
+<tr>
+<td>${safe(s.name)}</td>
+<td>${safe(s.className)}</td>
+<td>${safe(s.teacher)}</td>
+<td>
+<button class="btn danger" onclick="deleteSubject(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("subjectTable").innerHTML=html;
+}
+
+function addSubject(){
+
+let name=document.getElementById("subjectName").value.trim();
+let className=document.getElementById("subjectClass").value;
+let teacher=document.getElementById("subjectTeacher").value.trim();
+
+if(!name||!teacher){
+toast("Please fill all fields");
+return;
+}
+
+subjects.push({name,className,teacher});
+save(subjectsKey,subjects);
+
+closeModal("subjectModal");
+clearInputs("subjectName","subjectTeacher");
+
+renderSubjects();
+updateDashboard();
+toast("Subject added successfully");
+}
+
+function deleteSubject(i){
+if(confirm("Delete this subject?")){
+subjects.splice(i,1);
+save(subjectsKey,subjects);
+renderSubjects();
+updateDashboard();
+toast("Subject deleted");
+}
+}
+
+
+/* ================= ATTENDANCE ================= */
+
+function renderAttendance(){
+
+let html="";
+
+students.forEach(s=>{
+
+if(!attendance[s.roll])
+attendance[s.roll]={present:0,total:0};
+
+let a=attendance[s.roll];
+
+let percent=a.total?Math.round(a.present/a.total*100):0;
+
+html+=`
+<div class="att-card">
+<h3>${safe(s.name)}</h3>
+<p>Roll No: ${safe(s.roll)} • ${safe(s.className)}</p>
+<br>
+<button class="btn success" onclick="markAttendance('${s.roll}',true)">✓ Present</button>
+<button class="btn danger" onclick="markAttendance('${s.roll}',false)">✕ Absent</button>
+<p style="margin-top:12px;font-weight:bold">Attendance: ${percent}%</p>
+<div class="progress">
+<div class="progress-bar" style="width:${percent}%"></div>
+</div>
+</div>`;
+});
+
+save(attendanceKey,attendance);
+document.getElementById("attendanceContainer").innerHTML=html;
+}
+
+function markAttendance(roll,present){
+
+if(!attendance[roll])
+attendance[roll]={present:0,total:0};
+
+attendance[roll].total++;
+
+if(present)attendance[roll].present++;
+
+save(attendanceKey,attendance);
+
+renderAttendance();
+updateDashboard();
+
+toast(present?"Present marked":"Absent marked");
+}
+
+
+/* ================= MARKS ================= */
+
+function fillStudentSelect(){
+
+let html="";
+students.forEach(s=>{
+html+=`<option value="${safe(s.roll)}">${safe(s.name)} - ${safe(s.className)}</option>`;
+});
+
+document.getElementById("marksStudent").innerHTML=html;
+document.getElementById("feeStudent").innerHTML=html;
+}
+
+function fillSubjectSelect(){
+
+let html="";
+subjects.forEach(s=>{
+html+=`<option value="${safe(s.name)}">${safe(s.name)}</option>`;
+});
+
+document.getElementById("marksSubject").innerHTML=html;
+}
+
+function renderMarks(){
+
+let search=(document.getElementById("marksSearch")?.value||"").toLowerCase();
+
+let html="";
+
+marks.forEach((m,i)=>{
+
+if(
+!m.student.toLowerCase().includes(search)&&
+!m.subject.toLowerCase().includes(search)
+)return;
+
+let percent=Math.round(m.marks/m.total*100);
+
+html+=`
+<tr>
+<td>${safe(m.student)}</td>
+<td>${safe(m.className)}</td>
+<td>${safe(m.subject)}</td>
+<td>${safe(m.exam)}</td>
+<td>${safe(m.marks)}</td>
+<td>${safe(m.total)}</td>
+<td>${percent}%</td>
+<td>
+<button class="btn danger" onclick="deleteMarks(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("marksTable").innerHTML=html;
+}
+
+function addMarks(){
+
+let roll=document.getElementById("marksStudent").value;
+let subject=document.getElementById("marksSubject").value;
+let exam=document.getElementById("marksExam").value;
+let obtained=Number(document.getElementById("marksObtained").value);
+let total=Number(document.getElementById("marksTotal").value);
+
+let student=students.find(s=>s.roll===roll);
+
+if(!student||!subject||!total||obtained<0||obtained>total){
+toast("Enter valid marks");
+return;
+}
+
+marks.push({
+student:student.name,
+roll:student.roll,
+className:student.className,
+subject,
+exam,
+marks:obtained,
+total
+});
+
+save(marksKey,marks);
+closeModal("marksModal");
+
+document.getElementById("marksObtained").value="";
+
+renderMarks();
+renderReports();
+
+toast("Marks saved successfully");
+}
+
+function deleteMarks(i){
+if(confirm("Delete this marks record?")){
+marks.splice(i,1);
+save(marksKey,marks);
+renderMarks();
+renderReports();
+toast("Marks deleted");
+}
+}
+
+
+/* ================= FEES ================= */
+
+function renderFees(){
+
+let html="";
+let total=0,paid=0;
+
+fees.forEach((f,i)=>{
+
+let pending=Number(f.total)-Number(f.paid);
+
+total+=Number(f.total);
+paid+=Number(f.paid);
+
+let status=pending<=0?"Paid":"Pending";
+
+html+=`
+<tr>
+<td>${safe(f.student)}</td>
+<td>${safe(f.className)}</td>
+<td>₹${Number(f.total).toLocaleString()}</td>
+<td>₹${Number(f.paid).toLocaleString()}</td>
+<td>₹${pending.toLocaleString()}</td>
+<td>
+<span style="font-weight:bold;color:${pending<=0?'#159957':'#ed8b00'}">
+${status}
+</span>
+</td>
+<td>
+<button class="btn danger" onclick="deleteFee(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("feeTable").innerHTML=html;
+
+document.getElementById("totalFees").innerText="₹"+total.toLocaleString();
+document.getElementById("paidFees").innerText="₹"+paid.toLocaleString();
+document.getElementById("pendingFees").innerText="₹"+(total-paid).toLocaleString();
+}
+
+function addFee(){
+
+let roll=document.getElementById("feeStudent").value;
+let total=Number(document.getElementById("feeTotal").value);
+let paid=Number(document.getElementById("feePaid").value);
+
+let student=students.find(s=>s.roll===roll);
+
+if(!student||!total||paid<0||paid>total){
+toast("Enter valid fee details");
+return;
+}
+
+fees.push({
+student:student.name,
+roll:student.roll,
+className:student.className,
+total,
+paid
+});
+
+save(feesKey,fees);
+
+closeModal("feeModal");
+
+document.getElementById("feeTotal").value="";
+document.getElementById("feePaid").value="";
+
+renderFees();
+updateDashboard();
+renderReports();
+
+toast("Fee record saved");
+}
+
+function deleteFee(i){
+if(confirm("Delete this fee record?")){
+fees.splice(i,1);
+save(feesKey,fees);
+renderFees();
+updateDashboard();
+renderReports();
+toast("Fee record deleted");
+}
+}
+
+
+/* ================= NOTICES ================= */
+
+function renderNotices(){
+
+let html="";
+
+notices.forEach((n,i)=>{
+html+=`
+<div class="notice">
+<strong>📢 ${safe(n.title)}</strong>
+<p>${safe(n.details)}</p>
+<small>${safe(n.date)}</small>
+<br><br>
+<button class="btn danger" onclick="deleteNotice(${i})">Delete</button>
+</div>`;
+});
+
+document.getElementById("noticeContainer").innerHTML=
+html||"<p style='color:var(--muted)'>No notices available.</p>";
+}
+
+function addNotice(){
+
+let title=document.getElementById("noticeTitle").value.trim();
+let date=document.getElementById("noticeDate").value;
+let details=document.getElementById("noticeDetails").value.trim();
+
+if(!title||!date||!details){
+toast("Please fill all fields");
+return;
+}
+
+notices.unshift({title,date,details});
+save(noticesKey,notices);
+
+closeModal("noticeModal");
+clearInputs("noticeTitle","noticeDate","noticeDetails");
+
+renderNotices();
+updateDashboard();
+renderReports();
+
+toast("Notice published");
+}
+
+function deleteNotice(i){
+if(confirm("Delete this notice?")){
+notices.splice(i,1);
+save(noticesKey,notices);
+renderNotices();
+updateDashboard();
+renderReports();
+toast("Notice deleted");
+}
+}
+
+
+/* ================= EVENTS ================= */
+
+function renderEvents(){
+
+let html="";
+
+events.forEach((e,i)=>{
+html+=`
+<tr>
+<td>${safe(e.name)}</td>
+<td>${safe(e.date)}</td>
+<td>${safe(e.venue)}</td>
+<td>
+<button class="btn danger" onclick="deleteEvent(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+document.getElementById("eventTable").innerHTML=
+html||`<tr><td colspan="4">No events available.</td></tr>`;
+}
+
+function addEvent(){
+
+let name=document.getElementById("eventName").value.trim();
+let date=document.getElementById("eventDate").value;
+let venue=document.getElementById("eventVenue").value.trim();
+
+if(!name||!date||!venue){
+toast("Please fill all fields");
+return;
+}
+
+events.push({name,date,venue});
+save(eventsKey,events);
+
+closeModal("eventModal");
+clearInputs("eventName","eventDate","eventVenue");
+
+renderEvents();
+toast("Event added successfully");
+}
+
+function deleteEvent(i){
+if(confirm("Delete this event?")){
+events.splice(i,1);
+save(eventsKey,events);
+renderEvents();
+toast("Event deleted");
+}
+}
+
+
+/* ================= REPORTS ================= */
+
+function renderReports(){
+
+document.getElementById("reportStudents").innerText=students.length;
+document.getElementById("reportTeachers").innerText=teachers.length;
+document.getElementById("reportNotices").innerText=notices.length;
+
+let totalAtt=0,attCount=0;
+
+students.forEach(s=>{
+let a=attendance[s.roll];
+if(a&&a.total){
+totalAtt+=a.present/a.total*100;
+attCount++;
+}
+});
+
+let avgAtt=attCount?Math.round(totalAtt/attCount):0;
+
+document.getElementById("reportAttendance").innerText=avgAtt+"%";
+
+let marksTotal=0,marksCount=0;
+
+marks.forEach(m=>{
+marksTotal+=m.marks/m.total*100;
+marksCount++;
+});
+
+let avgMarks=marksCount?Math.round(marksTotal/marksCount):0;
+
+document.getElementById("reportMarks").innerText=avgMarks+"%";
+
+let totalFee=fees.reduce((a,b)=>a+Number(b.total),0);
+let paidFee=fees.reduce((a,b)=>a+Number(b.paid),0);
+
+let feePercent=totalFee?Math.round(paidFee/totalFee*100):0;
+
+document.getElementById("reportFees").innerText=feePercent+"%";
+}
+
+
+/* ================= MODALS ================= */
+
+function openModal(id){
+
+if(id==="marksModal"){
+fillStudentSelect();
+fillSubjectSelect();
+}
+
+if(id==="feeModal"){
+fillStudentSelect();
+}
+
+document.getElementById(id).classList.add("show");
+}
+
+function closeModal(id){
+document.getElementById(id).classList.remove("show");
+}
+
+
+/* ================= DARK MODE ================= */
+
+function toggleDark(){
+
+document.body.classList.toggle("dark");
+
+localStorage.setItem(
+"eduDark",
+document.body.classList.contains("dark")
+);
+}
+
+if(localStorage.getItem("eduDark")==="true"){
+document.body.classList.add("dark");
+}
+
+
+/* ================= CLOCK ================= */
+
+function updateClock(){
+
+let now=new Date();
+
+let d=now.toLocaleDateString("en-IN",{
+day:"2-digit",
+month:"short",
+year:"numeric"
+});
+
+let t=now.toLocaleTimeString("en-IN",{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+});
+
+document.getElementById("clock").innerText=d+" • "+t;
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+
+/* ================= HELPERS ================= */
+
+function save(key,data){
+localStorage.setItem(key,JSON.stringify(data));
+}
+
+function clearInputs(...ids){
+ids.forEach(id=>document.getElementById(id).value="");
+}
+
+function safe(v){
+return String(v)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function toast(message){
+
+let t=document.getElementById("toast");
+t.innerText=message;
+t.classList.add("show");
+
+setTimeout(()=>{
+t.classList.remove("show");
+},2200);
+}
+
+
+/* ================= REFRESH ================= */
+
+function refreshAll(){
+
+renderStudents();
+renderTeachers();
+renderSubjects();
+renderAttendance();
+renderMarks();
+renderFees();
+renderNotices();
+renderEvents();
+renderReports();
+updateDashboard();
+
+}
+
+
+/* ================= START ================= */
+
+refreshAll();
+
+</script>
+
+</body>
+</html>
